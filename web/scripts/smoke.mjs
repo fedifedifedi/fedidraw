@@ -197,6 +197,48 @@ try {
   check(gameErrors.length === 0, `game: no page errors${gameErrors.length ? `: ${gameErrors.join(' | ')}` : ''}`);
   await game.close();
 
+  // ---------------------------------------------------------------- how it works
+  const metrics = JSON.parse(readFileSync(new globalThis.URL('../public/model/metrics.json', import.meta.url), 'utf8'));
+  const how = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const howErrors = [];
+  how.on('pageerror', (e) => howErrors.push(String(e)));
+  await how.goto(`${URL}#/how`);
+  await how.waitForSelector('.tile-value');
+  const tiles = await how.$$eval('.tile-value', (els) => els.map((e) => e.textContent));
+  const top1 = `${(metrics.test.top1 * 100).toFixed(1)}%`;
+  check(tiles[0] === top1, `how: top-1 tile matches metrics.json (${tiles[0]})`);
+  await how.waitForFunction(() => /ms/.test(document.querySelector('.facts').textContent), null, { timeout: 15000 });
+  const facts = await how.$$eval('.facts dt', (els) => els.map((e) => e.textContent));
+  check(facts.some((f) => /\d ms/.test(f)) && facts.some((f) => /MB/.test(f)), `how: model facts measured (${facts.join(' | ')})`);
+  check((await how.$$('.chart.curves svg, .chart.aug svg, .chart.per-class svg, .chart.matrix svg')).length === 4, 'how: the four charts are drawn');
+  const banana = await how.$eval('.chart.matrix svg', (svg) => {
+    const labels = [...svg.querySelectorAll('.m-label[class*="row-"]')].map((t) => t.textContent);
+    return { row: labels.indexOf('Banana'), col: labels.indexOf('Moon') };
+  });
+  const cell = await how.$(`.chart.matrix rect.cell[data-r="${banana.row}"][data-c="${banana.col}"]`);
+  await cell.hover();
+  const tip = await how.textContent('.matrix-card .chart-tip');
+  check(/Banana → Moon/.test(tip) && /6\.0%/.test(tip) && /1,000/.test(tip),`how: hovering banana→moon shows its tooltip ("${tip.trim()}")`);
+  await how.mouse.move(5, 5);
+  await how.screenshot({ path: out('how-light.png'), fullPage: true });
+  await how.click('.theme-toggle');
+  await how.click('[data-lang="fr"]');
+  await how.waitForTimeout(400);
+  await how.screenshot({ path: out('how-dark-fr.png'), fullPage: true });
+  await how.click('.theme-toggle');
+  await how.click('[data-lang="en"]');
+  check(howErrors.length === 0, `how: no page errors${howErrors.length ? `: ${howErrors.join(' | ')}` : ''}`);
+  await how.close();
+
+  const howPhone = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  const hp = await howPhone.newPage();
+  await hp.goto(`${URL}#/how`);
+  await hp.waitForSelector('.chart.matrix svg');
+  const overflow = await hp.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  check(overflow <= 0, `how phone: no horizontal page scroll (overflow ${overflow}px; the matrix scrolls inside its card)`);
+  await hp.screenshot({ path: out('how-phone.png'), fullPage: true });
+  await howPhone.close();
+
   const phoneGame = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
   const pg = await phoneGame.newPage();
   const pcdp = await phoneGame.newCDPSession(pg);

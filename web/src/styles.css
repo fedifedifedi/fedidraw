@@ -309,10 +309,6 @@ svg circle {
   margin: 0;
 }
 
-.placeholder p {
-  color: var(--ink-2);
-}
-
 /* ---------------------------------------------------------------- the sheet */
 
 .prompt {
@@ -1371,5 +1367,635 @@ svg path.doodle.hi {
 
   .pencil.hurry {
     animation: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------- how it works */
+
+:root {
+  --chart-1: #2e62b0;
+  --chart-2: #c4452a;
+  --chart-grid: rgba(42, 39, 34, 0.12);
+  --chart-axis: rgba(42, 39, 34, 0.35);
+}
+
+:root[data-theme='dark'] {
+  --chart-1: #5b8ad6;
+  --chart-2: #e0704c;
+  --chart-grid: rgba(241, 238, 228, 0.12);
+  --chart-axis: rgba(241, 238, 228, 0.35);
+}
+
+.how {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.how-hero {
+  max-width: 720px;
+  margin: 12px 0 8px;
+}
+
+.how-title {
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+.how-lead {
+  margin: 12px 0 0;
+  font-size: 19px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.how-section {
+  margin-top: 56px;
+}
+
+.how-section > .section-title {
+  font-size: 34px;
+}
+
+.how-text {
+  max-width: 70ch;
+  line-height: 1.6;
+  color: var(--ink-2);
+}
+
+.how-text a,
+.how-note a {
+  color: var(--ink);
+}
+
+.how-note {
+  margin: 12px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* The journey: four numbered steps. */
+.journey {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journey-step {
+  position: relative;
+  padding: 22px 18px 18px;
+  background: var(--paper);
+  border-radius: 2px;
+  box-shadow: var(--shadow-small);
+}
+
+.journey-step:nth-child(odd) {
+  transform: rotate(-0.6deg);
+}
+
+.journey-step:nth-child(even) {
+  transform: rotate(0.5deg);
+}
+
+.journey-num {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  font-family: var(--font-hand);
+  font-size: 24px;
+  background: var(--hi-soft);
+  border: 2px solid var(--ink);
+  border-radius: 50% 45% 55% 48% / 52% 50% 46% 55%;
+}
+
+.journey-step h3 {
+  margin: 12px 0 6px;
+  font-family: var(--font-hand);
+  font-size: 24px;
+  font-weight: 400;
+}
+
+.journey-step p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+/* Architecture: feature-map stacks shrinking and deepening. */
+.arch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 8px 4px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.arch-step {
+  position: relative;
+  display: flex;
+  flex: 1 1 120px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 110px;
+  text-align: center;
+}
+
+.arch-step:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -10px;
+  bottom: 70px;
+  font-family: var(--font-hand);
+  font-size: 26px;
+  color: var(--ink-2);
+}
+
+.arch-stack {
+  margin-bottom: 8px;
+  overflow: visible;
+}
+
+.arch-stack rect {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+.arch-stack rect.back {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+}
+
+.arch-stack rect.hi {
+  fill: var(--hi-soft);
+}
+
+.arch-stack.dense circle {
+  fill: var(--ink);
+  stroke: none;
+}
+
+.arch-step strong {
+  font-family: var(--font-hand);
+  font-size: 22px;
+  font-weight: 400;
+}
+
+.arch-step .shape {
+  font-size: 14px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.arch-step .note {
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 40px;
+  margin: 28px 0 0;
+}
+
+.facts div {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.facts dt {
+  font-family: var(--font-hand);
+  font-size: 28px;
+}
+
+.facts dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+/* Stat tiles. */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 18px 20px;
+  background: var(--paper);
+  border-radius: 2px;
+  box-shadow: var(--shadow-small);
+}
+
+.tile-value {
+  font-family: var(--font-hand);
+  font-size: 48px;
+  line-height: 1;
+}
+
+.tile-key {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tile-label {
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+
+/* Chart cards. */
+.how-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 28px;
+}
+
+.confusion-grid {
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+  margin-top: 0;
+}
+
+.how-card {
+  min-width: 0;
+  margin: 0;
+  padding: 20px 22px;
+  background: var(--paper);
+  border-radius: 2px;
+  box-shadow: var(--shadow-small);
+}
+
+.how-card h3 {
+  margin: 0;
+  font-family: var(--font-hand);
+  font-size: 27px;
+  font-weight: 400;
+}
+
+.how-card h4 {
+  margin: 20px 0 8px;
+  font-size: 15px;
+}
+
+.how-card figcaption p {
+  margin: 6px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+.chart-host {
+  position: relative;
+}
+
+.chart {
+  margin-top: 8px;
+}
+
+.chart svg {
+  display: block;
+  overflow: visible;
+  font-family: var(--font-ui);
+}
+
+.chart .grid {
+  stroke: var(--chart-grid);
+  stroke-width: 1;
+}
+
+.chart .axis {
+  stroke: var(--chart-axis);
+  stroke-width: 1;
+}
+
+.chart .tick,
+.chart .axis-title {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  fill: var(--ink-2);
+}
+
+.chart .row-label,
+.chart .direct-label {
+  font-size: 13px;
+  fill: var(--ink);
+}
+
+.chart .row-label.small {
+  font-size: 12px;
+}
+
+.chart .value {
+  font-size: 12px;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  fill: var(--ink-2);
+}
+
+.chart path.series {
+  fill: none;
+  stroke-width: 2;
+}
+
+.chart .dot {
+  stroke: var(--paper);
+  stroke-width: 2;
+}
+
+.chart .link,
+.chart .stem {
+  stroke: var(--chart-grid);
+  stroke-width: 2;
+}
+
+.chart .crosshair {
+  stroke: var(--chart-axis);
+  stroke-dasharray: 3 3;
+}
+
+.chart .hit,
+.chart .row-hit {
+  fill: transparent;
+}
+
+.chart .row:hover .row-label {
+  font-weight: 700;
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin: 14px 0 0;
+  padding: 0;
+  font-size: 13px;
+  color: var(--ink-2);
+  list-style: none;
+}
+
+.chart-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.chart-tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 260px;
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 4px 10px 5px 9px / 9px 4px 10px 5px;
+  box-shadow: var(--shadow-small);
+  pointer-events: none;
+}
+
+.chart-tip span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+}
+
+.chart-tip b {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.chart-tip i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+/* Confusion matrix. */
+.matrix-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+
+.matrix-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.matrix-legend .sw {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.matrix-legend .sw.right {
+  background: var(--ink);
+  opacity: 0.82;
+}
+
+.matrix-legend .sw.ramp {
+  width: 64px;
+  background: linear-gradient(to right, color-mix(in srgb, var(--chart-1) 8%, transparent), var(--chart-1));
+}
+
+.matrix-scroll {
+  overflow-x: auto;
+}
+
+.chart.matrix .m-bg {
+  fill: var(--chart-grid);
+  opacity: 0.35;
+}
+
+.chart.matrix .m-label {
+  font-size: 11px;
+  fill: var(--ink-2);
+}
+
+.chart.matrix .m-label.lit {
+  font-weight: 700;
+  fill: var(--ink);
+}
+
+.chart.matrix .m-focus {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+}
+
+.top-confusions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px 24px;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  list-style: none;
+}
+
+.top-confusions li {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px dashed var(--chart-grid);
+}
+
+.top-confusions b {
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table {
+  margin-top: 16px;
+  font-size: 14px;
+}
+
+.data-table summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.data-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table th,
+.data-table td {
+  padding: 5px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--chart-grid);
+}
+
+.data-table thead th {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+/* Limits and credits. */
+.how-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 40px;
+}
+
+.limits {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.limits li {
+  position: relative;
+  padding-left: 28px;
+  line-height: 1.5;
+}
+
+.limits li::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 0.55em;
+  width: 12px;
+  height: 8px;
+  border-left: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 960px) {
+  .journey,
+  .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .how-grid,
+  .confusion-grid,
+  .how-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .how-title {
+    font-size: 44px;
+  }
+
+  .how-lead {
+    font-size: 17px;
+  }
+
+  .journey {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tiles {
+    gap: 12px;
+  }
+
+  .tile-value {
+    font-size: 36px;
+  }
+
+  .arch-step {
+    flex-basis: 40%;
+  }
+
+  .arch-step::after {
+    display: none;
+  }
+
+  .how-card {
+    padding: 16px 14px;
+  }
+
+  .top-confusions {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

@@ -5,7 +5,7 @@ import './styles.css';
 import { applyI18n, t } from './i18n';
 import { loadLabels } from './labels';
 import { createDrawPage, type DrawPage } from './pages/draw';
-import { createPlaceholderPage } from './pages/placeholder';
+import { createHowPage } from './pages/how';
 import { createPlayPage } from './pages/play';
 import { Recognizer } from './recognizer';
 import { onStateChange, setLang, setTheme, state } from './state';
@@ -75,10 +75,11 @@ async function start(): Promise<void> {
   const recognizer = new Recognizer(labels);
   const draw: DrawPage = createDrawPage(labels, recognizer);
   const play = createPlayPage(labels, recognizer);
+  const how = createHowPage(labels, recognizer);
   const pages: Record<Route, HTMLElement> = {
     draw: draw.element,
     play: play.element,
-    how: createPlaceholderPage('navHow'),
+    how: how.element,
   };
   outlet.append(...Object.values(pages));
 
@@ -88,6 +89,7 @@ async function start(): Promise<void> {
     for (const [key, el] of Object.entries(pages)) el.hidden = key !== current;
     draw.setActive(current === 'draw');
     play.setActive(current === 'play');
+    how.setActive(current === 'how');
     app.querySelectorAll<HTMLAnchorElement>('[data-route]').forEach((a) => {
       if (a.dataset.route === current) a.setAttribute('aria-current', 'page');
       else a.removeAttribute('aria-current');
