@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Draw a doodle and watch a neural network guess it in real time, right in your browser." />
+    <title>FediDraw</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <script>
+      // Apply the saved theme and language before the first paint.
+      (function () {
+        var theme, lang;
+        try {
+          theme = localStorage.getItem('fedidraw.theme');
+          lang = localStorage.getItem('fedidraw.lang');
+        } catch (e) {}
+        if (theme !== 'light' && theme !== 'dark') {
+          theme = window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.lang = lang === 'fr' ? 'fr' : 'en';
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript>FediDraw needs JavaScript to run the drawing recognizer.</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

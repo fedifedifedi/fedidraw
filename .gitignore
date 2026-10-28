@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Training data and checkpoints (large, reproducible with download.py / train.py)
+training/data/
+training/checkpoints/
+*.npy
+*.npz
+*.pt
+*.pth
+
+# Node / Vite
+node_modules/
+web/dist/
+web/smoke-output/
+*.local
+
+# Vercel
+.vercel/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

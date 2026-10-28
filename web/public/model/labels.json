@@ -1,0 +1,210 @@
+{
+  "model": "fedidraw.onnx",
+  "classes": [
+    {
+      "id": "airplane",
+      "en": "airplane",
+      "fr": "avion"
+    },
+    {
+      "id": "apple",
+      "en": "apple",
+      "fr": "pomme"
+    },
+    {
+      "id": "banana",
+      "en": "banana",
+      "fr": "banane"
+    },
+    {
+      "id": "bicycle",
+      "en": "bicycle",
+      "fr": "vélo"
+    },
+    {
+      "id": "butterfly",
+      "en": "butterfly",
+      "fr": "papillon"
+    },
+    {
+      "id": "cactus",
+      "en": "cactus",
+      "fr": "cactus"
+    },
+    {
+      "id": "camel",
+      "en": "camel",
+      "fr": "chameau"
+    },
+    {
+      "id": "car",
+      "en": "car",
+      "fr": "voiture"
+    },
+    {
+      "id": "cat",
+      "en": "cat",
+      "fr": "chat"
+    },
+    {
+      "id": "clock",
+      "en": "clock",
+      "fr": "horloge"
+    },
+    {
+      "id": "cloud",
+      "en": "cloud",
+      "fr": "nuage"
+    },
+    {
+      "id": "crown",
+      "en": "crown",
+      "fr": "couronne"
+    },
+    {
+      "id": "eye",
+      "en": "eye",
+      "fr": "œil"
+    },
+    {
+      "id": "fish",
+      "en": "fish",
+      "fr": "poisson"
+    },
+    {
+      "id": "flower",
+      "en": "flower",
+      "fr": "fleur"
+    },
+    {
+      "id": "guitar",
+      "en": "guitar",
+      "fr": "guitare"
+    },
+    {
+      "id": "hammer",
+      "en": "hammer",
+      "fr": "marteau"
+    },
+    {
+      "id": "house",
+      "en": "house",
+      "fr": "maison"
+    },
+    {
+      "id": "key",
+      "en": "key",
+      "fr": "clé"
+    },
+    {
+      "id": "light bulb",
+      "en": "light bulb",
+      "fr": "ampoule"
+    },
+    {
+      "id": "lightning",
+      "en": "lightning",
+      "fr": "éclair"
+    },
+    {
+      "id": "moon",
+      "en": "moon",
+      "fr": "lune"
+    },
+    {
+      "id": "mushroom",
+      "en": "mushroom",
+      "fr": "champignon"
+    },
+    {
+      "id": "palm tree",
+      "en": "palm tree",
+      "fr": "palmier"
+    },
+    {
+      "id": "pizza",
+      "en": "pizza",
+      "fr": "pizza"
+    },
+    {
+      "id": "snowman",
+      "en": "snowman",
+      "fr": "bonhomme de neige"
+    },
+    {
+      "id": "star",
+      "en": "star",
+      "fr": "étoile"
+    },
+    {
+      "id": "sun",
+      "en": "sun",
+      "fr": "soleil"
+    },
+    {
+      "id": "tree",
+      "en": "tree",
+      "fr": "arbre"
+    },
+    {
+      "id": "umbrella",
+      "en": "umbrella",
+      "fr": "parapluie"
+    }
+  ],
+  "input": {
+    "name": "input",
+    "shape": [
+      1,
+      1,
+      28,
+      28
+    ],
+    "range": [
+      0,
+      1
+    ],
+    "description": "white strokes (1) on black background (0); normalisation is applied inside the model",
+    "normalization": {
+      "mean": 0.16486485302448273,
+      "std": 0.3234513998031616,
+      "applied_in_model": true
+    }
+  },
+  "outputs": {
+    "probs": [
+      30
+    ],
+    "act1": [
+      32,
+      28,
+      28
+    ],
+    "act2": [
+      64,
+      14,
+      14
+    ]
+  },
+  "preprocessing": {
+    "coordinate_range": 255,
+    "resample_spacing": 1,
+    "rdp_epsilon": 2.0,
+    "original_side": 256,
+    "line_width": 16,
+    "padding": 16,
+    "output_side": 28,
+    "background": 0.0,
+    "stroke": 1.0
+  },
+  "brain": {
+    "act1_channels": [
+      11,
+      13
+    ],
+    "act2_channels": [
+      14,
+      45
+    ]
+  }
+}
