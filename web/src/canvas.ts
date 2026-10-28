@@ -13,6 +13,8 @@ export interface PadChange {
  * Strokes are stored in canvas-relative units (0..1) so resizing keeps the drawing.
  */
 export class DrawingPad {
+  /** When false, new strokes are ignored (e.g. between game rounds). */
+  enabled = true;
   private strokes: Point[][] = [];
   private current: Point[] | null = null;
   private pointerId: number | null = null;
@@ -73,11 +75,12 @@ export class DrawingPad {
   }
 
   private resize(): void {
-    const rect = this.canvas.getBoundingClientRect();
+    // Layout size, not getBoundingClientRect(): the sheet may be mid page-turn (transformed) when it appears.
+    const { clientWidth, clientHeight } = this.canvas;
     this.dpr = window.devicePixelRatio || 1;
-    this.side = rect.width;
-    this.canvas.width = Math.round(rect.width * this.dpr);
-    this.canvas.height = Math.round(rect.height * this.dpr);
+    this.side = clientWidth;
+    this.canvas.width = Math.round(clientWidth * this.dpr);
+    this.canvas.height = Math.round(clientHeight * this.dpr);
     this.redraw();
   }
 
@@ -111,7 +114,7 @@ export class DrawingPad {
   }
 
   private start(e: PointerEvent): void {
-    if (this.pointerId !== null || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    if (!this.enabled || this.pointerId !== null || (e.pointerType === 'mouse' && e.button !== 0)) return;
     e.preventDefault();
     this.pointerId = e.pointerId;
     this.canvas.setPointerCapture(e.pointerId);

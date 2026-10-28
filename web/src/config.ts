@@ -12,6 +12,19 @@ export const ANSWER_RULES = {
   certainConfidence: 0.85,
 } as const;
 
+/** Game mode. */
+export const GAME_RULES = {
+  rounds: 6,
+  roundSeconds: 20,
+  /** A round is won when the target is the top guess with at least this probability. */
+  successConfidence: 0.4,
+  /** Pause on the "got it!" celebration, then on the "time's up" reveal, before the next round. */
+  winPauseMs: 1800,
+  losePauseMs: 2400,
+  /** The pencil turns red and shakes below this share of the time. */
+  hurryRatio: 0.25,
+} as const;
+
 /** Minimum delay between two predictions while the user is drawing. */
 export const PREDICT_INTERVAL_MS = 90;
 

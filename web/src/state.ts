@@ -4,7 +4,7 @@ export type Theme = 'light' | 'dark';
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
-function stored(key: string): string | null {
+export function stored(key: string): string | null {
   try {
     return localStorage.getItem(key);
   } catch {
@@ -12,7 +12,7 @@ function stored(key: string): string | null {
   }
 }
 
-function store(key: string, value: string): void {
+export function store(key: string, value: string): void {
   try {
     localStorage.setItem(key, value);
   } catch {

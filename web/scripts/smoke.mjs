@@ -1,4 +1,4 @@
-﻿// End-to-end smoke test in a real browser (Microsoft Edge or Chrome via playwright-core).
+// End-to-end smoke test in a real browser (Microsoft Edge or Chrome via playwright-core).
 //
 //   npm run build && npm run preview      (in another terminal)
 //   npm run smoke                         (screenshots go to ./smoke-output)
@@ -13,6 +13,8 @@ const URL = process.env.FEDIDRAW_URL ?? 'http://localhost:4173/';
 const OUT = new globalThis.URL('../smoke-output/', import.meta.url);
 mkdirSync(OUT, { recursive: true });
 const out = (name) => fileURLToPath(new globalThis.URL(name, OUT));
+/** The drawing canvas of the page currently shown (each page has its own). */
+const PAD = 'main > :not([hidden]) .pad';
 const fixture = JSON.parse(readFileSync(new globalThis.URL('../src/preprocess.fixture.json', import.meta.url), 'utf8'));
 
 let failures = 0;
@@ -42,7 +44,7 @@ async function ready(page) {
 }
 
 async function canvasRect(page) {
-  return page.$eval('.pad', (c) => {
+  return page.$eval(PAD, (c) => {
     const r = c.getBoundingClientRect();
     return { left: r.left, top: r.top, width: r.width, height: r.height };
   });
@@ -50,7 +52,7 @@ async function canvasRect(page) {
 
 /** Alpha of the canvas pixel under a viewport point. */
 async function inkAt(page, x, y) {
-  return page.$eval('.pad', (c, [x, y]) => {
+  return page.$eval(PAD, (c, [x, y]) => {
     const r = c.getBoundingClientRect();
     const px = Math.floor(((x - r.left) / r.width) * c.width);
     const py = Math.floor(((y - r.top) / r.height) * c.height);
@@ -138,7 +140,7 @@ try {
     }
     await page.click('[data-action="clear"]');
   }
-  for (const r of results) console.log(`      ${r.name.padEnd(6)} -> ${r.top}  Â«${r.answer}Â»`);
+  for (const r of results) console.log(`      ${r.name.padEnd(6)} -> ${r.top}  "${r.answer}"`);
   check(results.filter((r) => r.top.toLowerCase().startsWith(r.name)).length >= 3, 'mouse: real Quick Draw drawings are recognised');
 
   await page.click('.pad', { position: { x: 300, y: 300 } });
@@ -146,6 +148,67 @@ try {
   check(['searching', 'idle'].includes(await page.getAttribute('.answer', 'data-state')), 'a single dot gives "still looking"');
   check(errors.length === 0, `no console errors${errors.length ? `: ${errors.join(' | ')}` : ''}`);
   await page.close();
+
+  // ---------------------------------------------------------------- game mode
+  const game = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  const gameErrors = [];
+  game.on('pageerror', (e) => gameErrors.push(String(e)));
+  const words = ['sun', 'camel', 'house', 'cat', 'moon', 'key'];
+  await game.goto(`${URL}?words=${words.join(',')}#/play`);
+  await game.click('[data-action="start"]');
+  const drawing = () => game.waitForFunction(() => !document.querySelector('[data-action="skip"]').disabled, null, { timeout: 5000 });
+  await drawing();
+  const gameTransforms = await game.$eval('.play .pad', (c) => {
+    const list = [];
+    for (let el = c; el; el = el.parentElement) list.push(getComputedStyle(el).transform);
+    return list;
+  });
+  check(gameTransforms.every((t) => t === 'none'), 'game: the sheet is straight once the page has turned');
+  const s0 = Number((await game.textContent('.pencil-seconds')).replace(/\D/g, ''));
+  await game.waitForTimeout(1600);
+  const s1 = Number((await game.textContent('.pencil-seconds')).replace(/\D/g, ''));
+  check(s0 === 20 && s1 < s0, `game: the pencil timer runs (${s0} s -> ${s1} s)`);
+
+  let found = 0;
+  for (const [i, name] of words.entries()) {
+    if (i > 0) await drawing();
+    check((await game.textContent('.round-count')).includes(`${i + 1}/6`), `game: round ${i + 1}/6 shows "${await game.textContent('.round-word .word')}"`);
+    await drawWithMouse(game, fixture.find((f) => f.class === name).strokes);
+    const won = await game
+      .waitForFunction(() => document.querySelector('.ai-line').textContent.startsWith('Got it'), null, { timeout: 3000 })
+      .then(() => true, () => false);
+    if (won) {
+      found++;
+      if (found === 1) {
+        await game.waitForTimeout(450);
+        await game.screenshot({ path: out('game-win.png') });
+      }
+    } else {
+      await game.click('[data-action="skip"]');
+    }
+  }
+  await game.waitForSelector('.play-results:not([hidden])', { timeout: 8000 });
+  const score = await game.textContent('.results-score');
+  const cards = await game.$$eval('.result-card', (els) => els.length);
+  check(found >= 4 && score.trim() === `${found} / 6`, `game: real drawings recognised in ${found}/6 rounds, results say "${score.trim()}"`);
+  check(cards === 6, 'game: results show the 6 drawings');
+  await game.waitForTimeout(500);
+  await game.screenshot({ path: out('game-results.png'), fullPage: true });
+  check(gameErrors.length === 0, `game: no page errors${gameErrors.length ? `: ${gameErrors.join(' | ')}` : ''}`);
+  await game.close();
+
+  const phoneGame = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
+  const pg = await phoneGame.newPage();
+  const pcdp = await phoneGame.newCDPSession(pg);
+  await pg.goto(`${URL}?words=moon#/play`);
+  await pg.tap('[data-action="start"]');
+  await pg.waitForFunction(() => !document.querySelector('[data-action="skip"]').disabled, null, { timeout: 5000 });
+  const sheetTop = (await canvasRect(pg)).top;
+  await drawWithFinger(pg, pcdp, [fixture.find((f) => f.class === 'banana').strokes[0]]);
+  await pg.waitForTimeout(500);
+  await pg.screenshot({ path: out('game-phone.png') });
+  check(Math.abs((await canvasRect(pg)).top - sheetTop) < 0.5, 'game phone: the sheet does not move while the AI comments');
+  await phoneGame.close();
 
   // ---------------------------------------------------------------- phone, touch
   for (const theme of ['light', 'dark']) {
@@ -170,7 +233,7 @@ try {
       if (name === 'mushroom') await phone.screenshot({ path: out(`phone-${theme}.png`), fullPage: true });
       else await phone.tap('[data-action="clear"]');
     }
-    check(tops.every((t) => Math.abs(t - before.top) < 0.5), `${theme} phone: the sheet never moves (top ${before.top.toFixed(1)} â†’ ${tops.map((t) => t.toFixed(1)).join(', ')})`);
+    check(tops.every((t) => Math.abs(t - before.top) < 0.5), `${theme} phone: the sheet never moves (top ${before.top.toFixed(1)} -> ${tops.map((t) => t.toFixed(1)).join(', ')})`);
     await ctx.close();
   }
 } finally {

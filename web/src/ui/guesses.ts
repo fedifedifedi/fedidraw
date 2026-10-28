@@ -5,12 +5,12 @@ import { prefersReducedMotion } from '../state';
 
 const TILTS = ['-0.6deg', '0.4deg', '-0.3deg', '0.5deg', '-0.4deg'];
 
-/** Top-5 guesses drawn as highlighter strokes. Rows are reused so bars animate between updates. */
+/** Top guesses drawn as highlighter strokes. Rows are reused so bars animate between updates. */
 export class GuessList {
   private readonly rows: Array<{ li: HTMLLIElement; bar: HTMLElement; label: HTMLElement; pct: HTMLElement }>;
 
-  constructor(root: HTMLOListElement) {
-    this.rows = TILTS.map((tilt) => {
+  constructor(root: HTMLOListElement, count = 5) {
+    this.rows = TILTS.slice(0, count).map((tilt) => {
       const li = document.createElement('li');
       li.className = 'guess empty';
       li.style.setProperty('--tilt', tilt);
