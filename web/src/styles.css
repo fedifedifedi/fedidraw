@@ -254,6 +254,9 @@ svg circle {
 
 .page {
   max-width: 1440px;
+  /* Reserve the screen while the model loads, so the footer never jumps into view (CLS). */
+  min-height: 100vh;
+  min-height: 100dvh;
   margin: 0 auto;
   padding: 18px clamp(16px, 5vw, 64px) 28px clamp(52px, 6vw, 72px);
 }
@@ -1997,5 +2000,119 @@ svg path.doodle.hi {
 
   .top-confusions {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------------------------------------------------------------- very small phones (320 px) */
+
+/* Decorations (tape) may stick out of the page: clip them instead of scrolling sideways. */
+#app {
+  overflow-x: clip;
+}
+
+@media (max-width: 380px) {
+  .topbar {
+    gap: 8px;
+    padding: 10px 12px 4px 40px;
+  }
+
+  .logo span {
+    font-size: 26px;
+  }
+
+  .logo svg {
+    display: none;
+  }
+
+  .prefs {
+    gap: 4px;
+  }
+
+  .lang button {
+    min-width: 38px;
+  }
+
+  .page {
+    padding: 8px 12px 16px 40px;
+  }
+
+  .tools {
+    gap: 8px;
+  }
+
+  .tools .btn {
+    padding: 8px 12px;
+  }
+
+  .tape {
+    width: 70px;
+    height: 22px;
+  }
+
+  .tape.bl,
+  .tape.br {
+    width: 64px;
+    height: 20px;
+  }
+
+  .round-word .word {
+    font-size: 32px;
+  }
+
+  .ai-line {
+    font-size: 24px;
+  }
+
+  .pencil-seconds {
+    min-width: 2.6em;
+    font-size: 22px;
+  }
+
+  .results-score {
+    font-size: 60px;
+  }
+
+  .results-grid {
+    gap: 10px;
+  }
+
+  .result-card {
+    padding: 10px 8px;
+  }
+}
+
+@media (max-width: 860px) {
+  body.in-round .nav {
+    display: none;
+  }
+
+  body.in-round .footer {
+    padding-bottom: 32px;
+  }
+}
+
+@media (max-width: 380px) {
+  /* In a round, Undo and Clear become icon-only (text kept for screen readers) so the tools fit one row. */
+  .round-body .tools {
+    margin-top: 14px;
+  }
+
+  .round-body .btn:not(.btn-ghost) {
+    min-width: 44px;
+    justify-content: center;
+    padding: 8px 10px;
+  }
+
+  .round-body .btn:not(.btn-ghost) span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .round-ai {
+    height: 3.6rem;
   }
 }

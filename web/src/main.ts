@@ -83,9 +83,19 @@ async function start(): Promise<void> {
   };
   outlet.append(...Object.values(pages));
 
+  let current: Route = 'draw';
+  const titles: Record<Route, Parameters<typeof t>[0]> = { draw: 'navDraw', play: 'playTitle', how: 'navHow' };
+  const syncTitle = () => {
+    document.title = `FediDraw · ${t(titles[current])}`;
+  };
+  onStateChange(syncTitle);
+
   function route(): void {
     const name = location.hash.replace(/^#\/?/, '') as Route;
-    const current: Route = name in pages ? name : 'draw';
+    const next: Route = name in pages ? name : 'draw';
+    if (next !== current) window.scrollTo(0, 0);
+    current = next;
+    syncTitle();
     for (const [key, el] of Object.entries(pages)) el.hidden = key !== current;
     draw.setActive(current === 'draw');
     play.setActive(current === 'play');

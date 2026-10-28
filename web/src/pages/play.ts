@@ -120,6 +120,8 @@ export function createPlayPage(labels: Labels, recognizer: Recognizer) {
 
   function show(view: keyof typeof views): void {
     for (const [name, el] of Object.entries(views)) el.hidden = name !== view;
+    // Focus mode: on phones the bottom navigation is hidden during a round to make room.
+    document.body.classList.toggle('in-round', view === 'round' && active);
   }
 
   function best(): number {
@@ -353,6 +355,7 @@ export function createPlayPage(labels: Labels, recognizer: Recognizer) {
     setActive(value: boolean) {
       if (active && !value && phase !== 'results') abort();
       active = value;
+      if (!value) document.body.classList.remove('in-round');
     },
   };
 }

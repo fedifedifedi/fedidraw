@@ -7,6 +7,9 @@
     <meta name="description" content="Draw a doodle and watch a neural network guess it in real time, right in your browser." />
     <title>FediDraw</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="./favicon-32.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <meta name="theme-color" content="#f3ead6" />
     <script>
       // Apply the saved theme and language before the first paint.
       (function () {
@@ -20,6 +23,7 @@
         }
         document.documentElement.dataset.theme = theme;
         document.documentElement.lang = lang === 'fr' ? 'fr' : 'en';
+        document.querySelector('meta[name="theme-color"]').content = theme === 'dark' ? '#25302c' : '#f3ead6';
       })();
     </script>
   </head>

@@ -239,6 +239,52 @@ try {
   await hp.screenshot({ path: out('how-phone.png'), fullPage: true });
   await howPhone.close();
 
+  // ---------------------------------------------------------------- reduced motion
+  const calm = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  const cp = await calm.newPage();
+  await cp.goto(URL);
+  await ready(cp);
+  await drawWithMouse(cp, fixture.find((f) => f.class === 'sun').strokes);
+  await cp.waitForTimeout(300);
+  const motion = await cp.evaluate(() => ({
+    write: getComputedStyle(document.querySelector('.answer-text')).animationDuration,
+    bars: getComputedStyle(document.querySelector('.guess .bar')).transitionDuration,
+  }));
+  check(parseFloat(motion.write) <= 0.001 && parseFloat(motion.bars) <= 0.001, `reduced motion: animations are switched off (writing ${motion.write}, bars ${motion.bars})`);
+  await calm.close();
+
+  // ---------------------------------------------------------------- 320 px wide screens
+  // isMobile is off on purpose: mobile emulation widens the viewport to fit overflowing content.
+  const small = await browser.newContext({ viewport: { width: 320, height: 640 }, deviceScaleFactor: 2, hasTouch: true });
+  await small.addInitScript(() => localStorage.setItem('fedidraw.lang', 'fr'));
+  const sp = await small.newPage();
+  const spCdp = await small.newCDPSession(sp);
+  for (const hash of ['', '#/play', '#/how']) {
+    await sp.goto(`${URL}${hash}`);
+    await sp.waitForTimeout(800);
+    const width = await sp.evaluate(() => document.documentElement.scrollWidth);
+    check(width <= 320, `320 px ${hash || '#/'}: page fits the screen (scroll width ${width}px)`);
+  }
+  await sp.goto(URL);
+  await ready(sp);
+  const sr = await canvasRect(sp);
+  await drawWithFinger(sp, spCdp, [[[20, 236], [128, 128]]]);
+  const smallInk = await inkAt(sp, ...toViewport(sr, [128, 128]));
+  const toolsFit = await sp.$$eval('.draw .tools button', (bs) => bs.every((b) => b.getBoundingClientRect().right <= 320));
+  check(smallInk > 200 && toolsFit, `320 px: drawing works and every tool button is reachable`);
+  await sp.screenshot({ path: out('w320-draw.png') });
+  await sp.goto(`${URL}?words=sun#/play`);
+  await sp.tap('[data-action="start"]');
+  await sp.waitForFunction(() => !document.querySelector('[data-action="skip"]').disabled, null, { timeout: 5000 });
+  const roundFits = await sp.evaluate(() => document.documentElement.scrollWidth <= 320
+    && [...document.querySelectorAll('.play .tools button')].every((b) => {
+      const r = b.getBoundingClientRect();
+      return r.right <= 320 && r.bottom <= window.innerHeight;
+    }));
+  check(roundFits, '320 x 640: a whole game round fits on screen, three buttons visible without scrolling');
+  await sp.screenshot({ path: out('w320-round.png') });
+  await small.close();
+
   const phoneGame = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 3, isMobile: true, hasTouch: true });
   const pg = await phoneGame.newPage();
   const pcdp = await phoneGame.newCDPSession(pg);

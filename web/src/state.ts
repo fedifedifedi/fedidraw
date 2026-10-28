@@ -46,6 +46,7 @@ export function setLang(lang: Lang): void {
 export function setTheme(theme: Theme): void {
   state.theme = theme;
   document.documentElement.dataset.theme = theme;
+  document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#25302c' : '#f3ead6');
   store('fedidraw.theme', theme);
   emit();
 }
