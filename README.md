@@ -4,7 +4,6 @@
 
 Draw on the sheet and FediDraw guesses what it is while you draw: an answer in its own handwriting, its top-5 guesses and a live peek inside the neural network. Everything runs locally in your browser. No server, no account, and nothing you draw ever leaves your device.
 
-<!-- Demo GIF: record a short clip of a drawing being recognised and save it as docs/demo.gif -->
 ![FediDraw demo](docs/demo.gif)
 
 | 92.8 % | 98 % | 30 | 1.5 MB | ~1 ms | 100 % |
